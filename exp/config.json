@@ -1,0 +1,17 @@
+{
+    "exp_name": "sweep-test",
+    "sweep_config": {
+        "name" : "test",
+        "method" : "random",
+        "program": "unet/train.py",
+        "parameters" : {
+            "epochs" : {
+                "values" : [10, 20, 50]
+            },
+            "learning_rate" :{
+                "min": 0.0001,
+                "max": 0.1
+            }
+        }
+    }
+}
