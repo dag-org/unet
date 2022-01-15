@@ -1,0 +1,4 @@
+cloudformation/**/*.js
+node_modules
+.cdk.staging
+cdk.out

@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "target": "ES2017",
+        "module": "CommonJS",
+        "downlevelIteration": true,
+        "removeComments": true,
+        "allowJs": true,
+        "moduleResolution": "node",
+        "rootDir": "./"
+    },
+    "exclude": ["node_modules", "cdk.out"],
+    "include": ["./cfn/**/*"]
+}
