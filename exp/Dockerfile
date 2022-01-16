@@ -6,6 +6,7 @@ ENV LANG=C.UTF-8
 ENV TZ=America/Los_Angeles
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
+
 RUN apt update && apt -y upgrade && apt install -y software-properties-common 
 RUN add-apt-repository -y ppa:deadsnakes/ppa
 RUN apt install -y \
@@ -25,25 +26,20 @@ RUN python3.9 -m pip install torch==1.10.0+cu102 \
 COPY requirements.txt .
 RUN python3.9 -m pip install -r requirements.txt
 
+
 RUN (tmp_dir=/tmp/aws && mkdir $tmp_dir && cd $tmp_dir && \
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
     unzip "awscliv2.zip" && ./aws/install)
 RUN aws --version
 
-ARG AWS_ACCESS_KEY_ID_DATASETS
-ARG AWS_SECRET_ACCESS_KEY_DATASETS
-RUN aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID_DATASETS}
-RUN aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY_DATASETS}
-
 ARG AWS_ACCOUNT_ID
 ARG S3_PREFIX=s3://${AWS_ACCOUNT_ID}-datasets/davis-2017
 ARG DIR_DAVIS_2017="data/davis-2017"
-RUN aws s3 cp --recursive ${S3_PREFIX}/Annotations/480p/bear \
-    ${DIR_DAVIS_2017}/masks/bear
-RUN aws s3 cp --recursive ${S3_PREFIX}/JPEGImages/480p/bear \
-    ${DIR_DAVIS_2017}/images/bear
+RUN aws s3 cp ${S3_PREFIX}/Annotations/480p/bear ${DIR_DAVIS_2017}/masks/bear \
+    --recursive --no-sign-request
+RUN aws s3 cp ${S3_PREFIX}/JPEGImages/480p/bear ${DIR_DAVIS_2017}/images/bear \
+    --recursive --no-sign-request
 
-# COPY data/davis-2017/ ./data/davis-2017/
 
 COPY unet ./unet
 COPY exp ./exp
