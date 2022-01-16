@@ -1,13 +1,12 @@
-from os import path
 from math import prod, sqrt
+from typing import Tuple
 
 import torch
 from torch import nn
-import torchvision
-from . import utils
+from unet import utils
 
 
-def conv_seq(c_high: int, c_low: int, down: bool=True):
+def conv_seq(c_high: int, c_low: int, down: bool = True):
     return nn.Sequential(
         nn.Conv2d(*([c_low, c_high] if down else [c_high, c_low]), 3),
         nn.ReLU(),
@@ -75,18 +74,51 @@ class UNet(nn.Module):
         return self.final(x)
 
     def reset_weights(self):
-        for l in self.down:
-            for i in (0, 2): # Conv2d layers
-                N = l.conv[i].in_channels * prod(l.conv[i].kernel_size)
-                l.conv[i].weight.data.normal_(0, sqrt(2 / N))
+        for layer in self.down:
+            for i in (0, 2):    # Conv2d layers
+                N = layer.conv[i].in_channels * prod(layer.conv[i].kernel_size)
+                layer.conv[i].weight.data.normal_(0, sqrt(2 / N))
 
         for i in (0, 2):
             N = self.bottom[i].in_channels * prod(self.bottom[i].kernel_size)
             self.bottom[i].weight.data.normal_(0, sqrt(2 / N))
 
-        for l in self.up:
-            for i in (0, 2): # Conv2d layers
-                N = l.conv[i].in_channels * prod(l.conv[i].kernel_size)
-                l.conv[i].weight.data.normal_(0, sqrt(2 / N))
+        for layer in self.up:
+            for i in (0, 2):    # Conv2d layers
+                N = layer.conv[i].in_channels * prod(layer.conv[i].kernel_size)
+                layer.conv[i].weight.data.normal_(0, sqrt(2 / N))
 
         # self.final.weight.data.normal_(0, sqrt(2/self.final.))
+
+    def min_required_shape(self, h_w) -> Tuple[int, int]:
+        for _ in self.up:
+            for _ in range(2):
+                h_w = utils.min_required_shape_conv(h_w, 3)
+            h_w = utils.min_required_shape_upsample(h_w, scale_factor=2)
+
+        for _ in range(2):
+            h_w = utils.min_required_shape_conv(h_w, 3)
+
+        for _ in self.down:
+            h_w = utils.min_required_shape_maxpool(h_w, kernel_size=2, stride=2)
+            for _ in range(2):
+                h_w = utils.min_required_shape_conv(h_w, 3)
+
+        return h_w
+
+    def output_shape(self, h_w) -> Tuple[int, int]:
+        for _ in range(len(self.down)):
+            for _ in range(2):
+                h_w = utils.output_shape_conv(h_w, 3)
+
+            h_w = utils.output_shape_maxpool(h_w, kernel_size=2, stride=2)
+
+        for _ in range(2):
+            h_w = utils.output_shape_conv(h_w, 3)
+
+        for _ in range(len(self.up)):
+            h_w = utils.output_shape_upsample(h_w, scale_factor=2)
+            for _ in range(2):
+                h_w = utils.output_shape_conv(h_w, 3)
+
+        return h_w

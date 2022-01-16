@@ -3,18 +3,16 @@ from os import path
 import torch
 import torchvision as tv
 
-from semseg import utils
+from unet import utils
 
 
 class BearDataset(torch.utils.data.IterableDataset):
     def __init__(self, model: torch.nn.Module):
         super(BearDataset).__init__()
-        base_dir = path.join(
-            path.expanduser("~"),
-            "Projects/pytorch-playground/data/davis/", 
-        )
-        self.image_dir = path.join(base_dir, "JPEGImages/480p/bear")
-        self.mask_dir = path.join(base_dir, "Annotations/480p/bear")
+        # base_dir = "/app/data/davis-2017"
+        base_dir = "./data/davis-2017"
+        self.image_dir = path.join(base_dir, "images/bear")
+        self.mask_dir = path.join(base_dir, "masks/bear")
         filenames = [
             f for f in os.listdir(self.image_dir)
             if path.isfile(path.join(self.image_dir, f))
@@ -23,11 +21,10 @@ class BearDataset(torch.utils.data.IterableDataset):
 
         x = tv.io.read_image(path.join(self.image_dir, "00000.jpg"))
         (_, h_0, w_0) = x.shape
-        (h, w) = utils.min_required_shape((h_0, w_0), model)
+        (h, w) = model.min_required_shape((h_0, w_0))
         dim_max = max(h, w)
         self.pad_h = (dim_max - h_0) // 2
         self.pad_w = (dim_max - w_0) // 2
-        
 
     def __len__(self):
         return self.n_images

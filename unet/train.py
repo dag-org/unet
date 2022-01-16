@@ -1,12 +1,16 @@
+import os
+
 import torch
 from torch import nn
+import wandb
 
-from semseg.utils import trim_from
-from semseg.config import LEARNING_RATE, BATCH_SIZE, MOMENTUM
+from unet.utils import trim_from
+from unet.config import BATCH_SIZE
 
 
 def train_loop(dataloader, model: nn.Module, loss_fn, optimizer):
     for (i_batch, (X, y)) in enumerate(dataloader):
+        # print(f"{X.shape=}")
         if len(X) % BATCH_SIZE > 0:
             return
         _pred = model(X)
@@ -19,4 +23,7 @@ def train_loop(dataloader, model: nn.Module, loss_fn, optimizer):
 
         n = (i_batch + 1) * BATCH_SIZE
         if n % 10 == 0:
-            print(f"loss: {loss.item():>7f}  [{n:>5d}/{len(dataloader.dataset)}]")
+            loss_num = loss.item()
+            if os.environ.get("EXP_WANDB_DO_LOG") == "true":
+                wandb.log(data={"train_loss": loss_num})
+            print(f"loss: {loss_num:>7f}  [{n:>5d}/{len(dataloader.dataset)}]")

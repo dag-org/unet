@@ -2,3 +2,6 @@ cloudformation/**/*.js
 node_modules
 .cdk.staging
 cdk.out
+venv
+data/*
+!data/davis-2017

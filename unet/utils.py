@@ -3,8 +3,6 @@ from typing import Union, Tuple, TypeVar
 
 import torch
 
-from semseg import unet
-
 
 def trim_from(smaller, larger):
     # TODO: Assert smaller is smaller
@@ -82,10 +80,10 @@ def min_required_shape_conv(hw_out, kernel_size, stride=1, pad=0, dilation=1):
 
 def output_shape_conv(
     h_w: ScalarOrDuple[int],
-    kernel_size: ScalarOrDuple[int]=1,
-    stride: ScalarOrDuple[int]=1,
-    pad: ScalarOrDuple[int]=0,
-    dilation: int=1
+    kernel_size: ScalarOrDuple[int] = 1,
+    stride: ScalarOrDuple[int] = 1,
+    pad: ScalarOrDuple[int] = 0,
+    dilation: int = 1
 ):
     """
     Utility function for computing output of convolutions
@@ -100,41 +98,6 @@ def output_shape_conv(
     w = (h_w[1] + (2 * pad[1]) - (dilation * (kernel_size[1] - 1)) - 1) // stride[1] + 1
 
     return h, w
-
-
-def output_shape(h_w, model: unet.UNet) -> Tuple[int, int]:
-    for _ in range(len(model.down)):
-        for _ in range(2):
-            h_w = output_shape_conv(h_w, 3)
-
-        h_w = output_shape_maxpool(h_w, kernel_size=2, stride=2)
-
-    for _ in range(2):
-        h_w = output_shape_conv(h_w, 3)
-
-    for _ in range(len(model.up)):
-        h_w = output_shape_upsample(h_w, scale_factor=2)
-        for _ in range(2):
-            h_w = output_shape_conv(h_w, 3)
-
-    return h_w
-
-
-def min_required_shape(h_w, model: unet.UNet) -> Tuple[int, int]:
-    for _ in model.up:
-        for _ in range(2):
-            h_w = min_required_shape_conv(h_w, 3)
-        h_w = min_required_shape_upsample(h_w, scale_factor=2)
-
-    for _ in range(2):
-        h_w = min_required_shape_conv(h_w, 3)
-
-    for _ in model.down:
-        h_w = min_required_shape_maxpool(h_w, kernel_size=2, stride=2)
-        for _ in range(2):
-            h_w = min_required_shape_conv(h_w, 3)
-
-    return h_w
 
 
 def _pad_with_reflection(image: torch.Tensor, pad: Tuple[int, int]):
