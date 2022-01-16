@@ -1,27 +1,29 @@
-# FROM python:3.8-slim
-
-# WORKDIR /usr/app
-
-# RUN DEBIAN_FRONTEND=noninteractive pip3 install --upgrade pip && \
-#     pip3 install --no-cache-dir \
-#     torch==1.10.0 \
-#     torchvision==0.11.1 \
-#     -f https://download.pytorch.org/whl/torch_stable.html
-
 FROM nvidia/cuda:10.2-runtime
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+WORKDIR /usr/app
+
+ENV LANG=C.UTF-8
+ENV TZ=America/Los_Angeles
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+RUN apt update && apt -y upgrade && apt install -y software-properties-common 
+RUN add-apt-repository -y ppa:deadsnakes/ppa
+RUN apt install -y \
     curl \
     unzip \
     git \
     build-essential \
-    python3-dev \
-    python3-pip \
-    python3-setuptools
+    python3.9 python3.9-dev python3.9-venv
 
-RUN pip3 -q install pip --upgrade
+RUN apt install -y python3-pip
+RUN python3.9 -m ensurepip --default-pip --user
+RUN python3.9 -m pip install --upgrade pip --user
+
+RUN python3.9 -m pip install --upgrade pip setuptools
+RUN python3.9 -m pip install torch==1.10.0+cu102 \
+    -f https://download.pytorch.org/whl/torch_stable.html
 COPY requirements.txt .
-RUN pip3 install -r requirements.txt
+RUN python3.9 -m pip install -r requirements.txt
 
 RUN (tmp_dir=/tmp/aws && mkdir $tmp_dir && cd $tmp_dir && \
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \

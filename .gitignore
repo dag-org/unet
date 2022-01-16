@@ -5,3 +5,5 @@ cdk.out
 venv
 data/*
 !data/davis-2017
+__pycache__
+.vscode

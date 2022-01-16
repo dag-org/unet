@@ -5,6 +5,7 @@
         "project": "unet",
         "method" : "random",
         "program": "run_exp.py",
+        "command": ["${env}", "python3.9", "${program}", "${args}"],
         "parameters" : {
             "n_epochs" : {
                 "values" : [10, 20, 50]
