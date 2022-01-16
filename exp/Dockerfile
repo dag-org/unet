@@ -46,4 +46,5 @@ RUN aws s3 cp --recursive ${S3_PREFIX}/JPEGImages/480p/bear \
 # COPY data/davis-2017/ ./data/davis-2017/
 
 COPY unet ./unet
+COPY exp ./exp
 COPY run_exp.py .
