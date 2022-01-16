@@ -32,8 +32,7 @@ RUN (tmp_dir=/tmp/aws && mkdir $tmp_dir && cd $tmp_dir && \
     unzip "awscliv2.zip" && ./aws/install)
 RUN aws --version
 
-ARG AWS_ACCOUNT_ID
-ARG S3_PREFIX=s3://${AWS_ACCOUNT_ID}-datasets/davis-2017
+ARG S3_PREFIX=s3://510666016636-datasets/davis-2017
 ARG DIR_DAVIS_2017="data/davis-2017"
 RUN aws s3 cp ${S3_PREFIX}/Annotations/480p/bear ${DIR_DAVIS_2017}/masks/bear \
     --recursive --no-sign-request

@@ -34,10 +34,6 @@ export class SweepTaskImage extends Construct {
         let tagLatest = "${dockerRepoName}:latest"
         let tagLatestEcr = `\${ecrRegistry}/${tagLatest}`
         let environmentVariables = {
-            NPM_TOKEN_READ_ONLY: {
-                type: aws_codebuild.BuildEnvironmentVariableType.SECRETS_MANAGER,
-                value: "NpmTokenReadOnlySecret:NPM_TOKEN_READ_ONLY"
-            },
             AWS_REGION: {
                 type: aws_codebuild.BuildEnvironmentVariableType.PLAINTEXT,
                 value: Aws.REGION
@@ -50,10 +46,6 @@ export class SweepTaskImage extends Construct {
                 type: aws_codebuild.BuildEnvironmentVariableType.PLAINTEXT,
                 value: ecrRegistry
             },
-            // MOUNT_POINT: {
-            //     type: aws_codebuild.BuildEnvironmentVariableType.PLAINTEXT,
-            //     value: config.EFS_MOUNT_POINT
-            // },
             TAG_COMMIT_ECR_BASE: {
                 type: aws_codebuild.BuildEnvironmentVariableType.PLAINTEXT,
                 value: Fn.sub(tagCommitEcrBase, { ecrRegistry, dockerRepoName })
@@ -67,13 +59,6 @@ export class SweepTaskImage extends Construct {
         let buildSpec = aws_codebuild.BuildSpec.fromObjectToYaml({
             version: "0.2",
             phases: {
-                // install: {
-                //     commands: [
-                //         "nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock "
-                //         + "-host=tcp://127.0.0.1:2375 --storage-driver=overlay2 &",
-                //         "timeout 15 sh -c \"until docker info; do echo .; sleep 1; done\""
-                //     ]
-                //   },
                   pre_build: {
                     commands : [
                         "aws ecr get-login-password --region ${AWS_REGION} | "
@@ -86,8 +71,6 @@ export class SweepTaskImage extends Construct {
                         "docker build "
                         + "-f exp/Dockerfile "
                         + "-t ${DOCKER_REPO}:${CODEBUILD_RESOLVED_SOURCE_VERSION} "
-                        + "--build-arg NPM_TOKEN=${NPM_TOKEN_READ_ONLY} "
-                        + "--build-arg MOUNT_POINT=${MOUNT_POINT} "
                         + "."
                     ]
                   },

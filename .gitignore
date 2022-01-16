@@ -3,7 +3,6 @@ node_modules
 .cdk.staging
 cdk.out
 venv
-data/*
-!data/davis-2017
+data
 __pycache__
 .vscode

@@ -23,11 +23,7 @@ run-local: install
 	deactivate
 
 image-exp:
-	DOCKER_BUILDKIT=0 docker build -f exp/Dockerfile -t unet-exp:latest \
-		--build-arg AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID} \
-		--build-arg AWS_ACCESS_KEY_ID_DATASETS=${AWS_ACCESS_KEY_ID_DATASETS} \
-		--build-arg AWS_SECRET_ACCESS_KEY_DATASETS=${AWS_SECRET_ACCESS_KEY_DATASETS} \
-		.
+	DOCKER_BUILDKIT=0 docker build -f exp/Dockerfile -t unet-exp:latest .
 
 run-exp: image-exp
 	docker run --env WANDB_API_KEY=${WANDB_API_KEY} \
