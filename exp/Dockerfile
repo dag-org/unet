@@ -41,6 +41,8 @@ RUN aws s3 cp ${S3_PREFIX}/Annotations/480p/bear ${DIR_DAVIS_2017}/masks/bear \
 RUN aws s3 cp ${S3_PREFIX}/JPEGImages/480p/bear ${DIR_DAVIS_2017}/images/bear \
     --recursive --no-sign-request
 
+ARG WANDB_API_KEY
+ENV WANDB_API_KEY=${WANDB_API_KEY}
 
 COPY unet ./unet
 COPY exp ./exp
