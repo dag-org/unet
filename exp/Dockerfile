@@ -6,7 +6,6 @@ ENV LANG=C.UTF-8
 ENV TZ=America/Los_Angeles
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-
 RUN apt update && apt -y upgrade && apt install -y software-properties-common 
 RUN add-apt-repository -y ppa:deadsnakes/ppa
 RUN apt install -y \
@@ -15,6 +14,8 @@ RUN apt install -y \
     git \
     build-essential \
     python3.9 python3.9-dev python3.9-venv
+RUN update-ca-certificates
+
 
 RUN apt install -y python3-pip
 RUN python3.9 -m ensurepip --default-pip --user
