@@ -10,9 +10,6 @@ from unet.config import BATCH_SIZE
 
 def train_loop(dataloader, model: nn.Module, loss_fn, optimizer):
     for (i_batch, (X, y)) in enumerate(dataloader):
-        # print(f"{X.shape=}")
-        if len(X) % BATCH_SIZE > 0:
-            return
         _pred = model(X)
         pred = trim_from(y, _pred)
         loss = loss_fn(pred, y.to(torch.long).squeeze(1))
