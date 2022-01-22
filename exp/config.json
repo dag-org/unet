@@ -1,12 +1,11 @@
 {
     "exp_name": "test",
-    "n_runs_per_worker": 10,
+    "n_runs_per_task": "10",
     "sweep_config": {
         "name" : "test",
         "project": "unet",
-        "method" : "random",
         "program": "run_exp.py",
-        "command": ["${env}", "python3.9", "${program}", "${args}"],
+        "method" : "random",
         "parameters" : {
             "n_epochs" : {
                 "values" : [10, 20, 50]
