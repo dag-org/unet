@@ -1,5 +1,6 @@
 {
     "exp_name": "test",
+    "n_runs_per_worker": 10,
     "sweep_config": {
         "name" : "test",
         "project": "unet",
