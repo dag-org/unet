@@ -17,7 +17,7 @@ export class SweepTaskImage extends Construct {
         super(scope, id)
 
         let gitHubSource = aws_codebuild.Source.gitHub({
-            owner: "dag-org",
+            owner: "davidagold",
             repo: "unet",
             webhook: true,
             webhookFilters: [

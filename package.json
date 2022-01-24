@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dag-org/unet.git"
+    "url": "git+https://github.com/davidagold/unet.git"
   },
   "author": "David A. Gold",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dag-org/unet/issues"
+    "url": "https://github.com/davidagold/unet/issues"
   },
-  "homepage": "https://github.com/dag-org/unet#readme",
+  "homepage": "https://github.com/davidagold/unet#readme",
   "devDependencies": {
     "@types/node": "^17.0.8",
     "aws-cdk": "2.8.0",

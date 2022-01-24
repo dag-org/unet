@@ -1,6 +1,6 @@
 {
     "exp_name": "test",
-    "n_runs_per_task": "10",
+    "n_runs_per_task": 10,
     "sweep_config": {
         "name" : "test",
         "project": "unet",
