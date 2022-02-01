@@ -4,6 +4,7 @@ SHELL :/bin/bash
 
 env=staging
 
+
 venv:
 	python3 -m venv venv
 
