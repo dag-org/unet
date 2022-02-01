@@ -1,6 +1,8 @@
 SHELL :/bin/bash
 
-.PHONY: venv install data clean run-local image-exp run-exp
+.PHONY: venv install data clean run-local image-exp run-exp deploy
+
+env=staging
 
 
 venv:
@@ -28,3 +30,6 @@ image-exp:
 run-exp: image-exp
 	docker run --env WANDB_API_KEY=${WANDB_API_KEY} \
 		unet-exp:latest /bin/bash exp/init.sh $(SWEEP_ID)
+
+deploy:
+	cdk deploy --context env=$(env)

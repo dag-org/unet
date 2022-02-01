@@ -6,9 +6,10 @@ ENV LANG=C.UTF-8
 ENV TZ=America/Los_Angeles
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN apt update && apt -y upgrade && apt install -y software-properties-common 
+RUN apt update && apt -y upgrade && apt install -y software-properties-common
 RUN add-apt-repository -y ppa:deadsnakes/ppa
 RUN apt install -y \
+    iputils-ping \
     curl \
     unzip \
     git \
@@ -40,6 +41,8 @@ RUN aws s3 cp ${S3_PREFIX}/Annotations/480p/bear ${DIR_DAVIS_2017}/masks/bear \
 RUN aws s3 cp ${S3_PREFIX}/JPEGImages/480p/bear ${DIR_DAVIS_2017}/images/bear \
     --recursive --no-sign-request
 
+ARG WANDB_API_KEY
+ENV WANDB_API_KEY=${WANDB_API_KEY}
 
 COPY unet ./unet
 COPY exp ./exp

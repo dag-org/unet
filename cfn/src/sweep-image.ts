@@ -17,7 +17,7 @@ export class SweepTaskImage extends Construct {
         super(scope, id)
 
         let gitHubSource = aws_codebuild.Source.gitHub({
-            owner: "dag-org",
+            owner: "davidagold",
             repo: "unet",
             webhook: true,
             webhookFilters: [
@@ -53,6 +53,10 @@ export class SweepTaskImage extends Construct {
             TAG_LATEST_ECR: {
                 type: aws_codebuild.BuildEnvironmentVariableType.PLAINTEXT,
                 value: Fn.sub(tagLatestEcr, { dockerRepoName, ecrRegistry })
+            },
+            WANDB_API_KEY: {
+                type: aws_codebuild.BuildEnvironmentVariableType.SECRETS_MANAGER,
+                value: "WandbApiTokenSecret:WandbApiKey"
             }
         }
 
@@ -71,6 +75,7 @@ export class SweepTaskImage extends Construct {
                         "docker build "
                         + "-f exp/Dockerfile "
                         + "-t ${DOCKER_REPO}:${CODEBUILD_RESOLVED_SOURCE_VERSION} "
+                        + "--build-arg WANDB_API_KEY=${WANDB_API_KEY} "
                         + "."
                     ]
                   },
